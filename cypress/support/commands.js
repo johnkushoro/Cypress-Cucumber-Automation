@@ -47,7 +47,6 @@ Cypress.Commands.add('hoverAndClickElement', (buttonText) => {
     cy.get(loginLinkSelector).click();
 });
 
-
 Cypress.Commands.add('getIframe', (iframe) => {
     return cy.get(iframe).its('0.contentDocument.body').should('be.visible').then(cy.wrap);
 });
@@ -220,24 +219,28 @@ Cypress.Commands.add('clickNextAndUpdatePage', (nextButtonText, numberOfClicks) 
     const itemsPerPage = 10;
     const pageDisplaySelector = 'a:contains("Displaying")';
     const clickNextButton = () => cy.contains('a', nextButtonText).click();
-    const validatePageDisplay = (text) => {
-        const matches = text.match(/(\d+) to (\d+) of (\d+)/);
-        if (!matches) {
-            cy.log('Unable to extract page information from the page display.');
-            return;
-        }
-        const [, , endItem, newTotalItems] = matches.map(Number);
-        const nextPage = Math.ceil(endItem / itemsPerPage);
-        if (nextPage * itemsPerPage <= newTotalItems) {
-            cy.log(`Page updated to ${nextPage}`);
-        } else {
-            cy.log('Page display did not update correctly.');
-        }
-    };
-
-    cy.wrap(null).then(() => {for (let i = 0; i < numberOfClicks; i++) {clickNextButton();
+    cy.wrap(null).then(() => {
+            for (let i = 0; i < numberOfClicks; i++) {
+                clickNextButton();
             }
-        }).then(() => cy.get(pageDisplaySelector).should('be.visible')).invoke('text').then(validatePageDisplay);
+        }).then(() => {
+            cy.get(pageDisplaySelector).should('be.visible').invoke('text').then((text) => {
+                    const matches = text.match(/(\d+) to (\d+) of (\d+)/);
+                    if (!matches) {
+                        cy.log('Unable to extract page information from the page display.');
+                        return;
+                    }
+                    const [, startItem, endItem, newTotalItems] = matches.map(Number);
+                    const currentPage = Math.ceil(startItem / itemsPerPage);
+                    const nextPage = currentPage + 1; // Calculate the next page based on itemsPerPage
+
+                    const pageUpdated = itemsPerPage === 10 && nextPage * itemsPerPage <= newTotalItems;
+                    cy.log(pageUpdated ? `Page updated to ${nextPage}` : 'Page display did not update correctly.');
+                    if (!pageUpdated) {
+                        cy.fail('Test failed due to incorrect page display.');
+                    }
+                });
+        });
 });
 
 Cypress.Commands.add('compareHeaderAndPageMatches', () => {
