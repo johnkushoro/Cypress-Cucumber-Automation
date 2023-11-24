@@ -82,3 +82,7 @@ Then(/^the displayed page number should be updated correctly$/, () => {
     cy.get('a').should('contain', 'Displaying'); // Check if the element contains the text "Displaying"
     cy.get('a').should('contain', 'of').should('contain', '574'); // Check if the element contains "of" and "574"
 });
+
+Then(/^the header text should match the number of page matches$/, () => {
+    cy.compareHeaderAndPageMatches();
+});

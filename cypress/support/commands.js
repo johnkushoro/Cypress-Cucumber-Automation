@@ -239,3 +239,15 @@ Cypress.Commands.add('clickNextAndUpdatePage', (nextButtonText, numberOfClicks) 
             }
         }).then(() => cy.get(pageDisplaySelector).should('be.visible')).invoke('text').then(validatePageDisplay);
 });
+
+Cypress.Commands.add('compareHeaderAndPageMatches', () => {
+    cy.get(PageObject.H1_WITH_TEXT_MAIN).invoke('text').then((headerText) => {
+        const headerNumber = parseInt(headerText.match(/\d+/)[0]);
+        cy.get('li.current a').invoke('text').then((pageMatchesText) => {
+            const pageMatchesNumber = parseInt(pageMatchesText.split(' ').pop());
+            expect(headerNumber).to.equal(pageMatchesNumber);
+        });
+    });
+});
+
+
