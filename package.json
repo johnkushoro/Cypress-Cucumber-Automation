@@ -7,16 +7,7 @@
     "cypress:runner": "cypress open --e2e --browser chrome",
     "cypress:runner:headed": "cypress run --headed --browser chrome",
     "cypress:execution": "cypress run --spec cypress/e2e/features/*",
-    "cypress:execution-tags": "cypress run --env tags=@mobile",
-    "cypress:execution-allure": "cypress run --env allure=true",
-    "allure:clear": "rm -r allure-results/ allure-report cypress/screenshots || true",
-    "allure:report": "allure generate allure-results --clean -o allure-report",
-    "allure:history": "mv -f allure-report/history allure-results/history && rm -r allure-report || true",
-    "cypress:run:very website headed": "npx cypress run --spec cypress/e2e/features/very.feature --headed",
-    "cypress:run:saucedo website headed": "npx cypress run --spec cypress/e2e/features/login.feature --headed",
-    "cypress:run:BHMUnrecognizedCard headed": "npx cypress run --spec cypress/e2e/features/BHMUnrecognizedCard.feature --headed",
-    "cypress:run:BHMSavingAddress headed": "npx cypress run --spec cypress/e2e/features/BHMSavingAddress.feature --headed",
-    "cypress:run:computerDataBase headed": "npx cypress run --spec cypress/e2e/features/computerDataBase.feature --headed"
+    "cypress:run:computerDataBase headed": "npx cypress run --spec cypress/e2e/features/computerDataBase.feature --headed --browser chrome && node cucumber-html-report.js"
   },
   "keywords": [
     "cypress"
@@ -24,11 +15,11 @@
   "author": "cucumber",
   "license": "ISC",
   "devDependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "^18.0.6",
+    "@badeball/cypress-cucumber-preprocessor": "^4.3.1",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
-    "@shelex/cypress-allure-plugin": "^2.5.0",
+    "@shelex/cypress-allure-plugin": "^2.40.1",
     "@types/dotenv": "^8.2.0",
-    "cypress": "^13.5.1",
+    "cypress": "^13.6.1",
     "cypress-iframe": "^1.0.1",
     "cypress-wait-until": "^2.0.1",
     "cypress-xpath": "^2.0.1",
@@ -42,11 +33,29 @@
     "multiple-cucumber-html-reporter": "^3.5.0"
   },
   "dependencies": {
+    "@cucumber/cucumber": "^10.1.0",
     "cypress-cucumber-preprocessor": "^4.3.1",
     "cypress-on-fix": "^1.0.2",
-    "electron": "^27.0.1",
+    "electron": "29.0.0-alpha.1",
     "faker": "^5.5.3",
     "require.js": "^1.0.0",
-    "sprintf-js": "^1.1.3"
+    "sprintf-js": "^1.1.3",
+    "useragent": "^2.3.0"
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": "cypress/e2e/step_definitions/**/*.js",
+    "html": {
+      "enabled": true,
+      "output": "cypress/reports/cucumber-html/cucumber-report.html"
+    },
+    "messages": {
+      "enabled": true,
+      "output": "cypress/reports/cucumber-ndjson/cucumber-report.ndjson"
+    },
+    "json": {
+      "enabled": true,
+      "formatter": "cucumber-json-formatter",
+      "output": "cypress/reports/cucumber-json/cucumber-report.json"
+    }
   }
 }
